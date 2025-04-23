@@ -12,12 +12,12 @@ def get_weather_data(city_name):
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=imperial"
     response = requests.get(url)
 
- if response.status_code == 200:
-    return response.json()
-else:
-    st.error(f"Error fetching weather data: {response.status_code}")
-    st.text(response.text)  # 👈 Add this to see the full error message
-    return None
+     if response.status_code == 200:
+        return response.json()
+    else:
+        st.error(f"Error fetching weather data: {response.status_code}")
+        st.text(response.text)  # 👈 Add this to see the full error message
+        return None
 
 
 def get_coordinates(city_name):
