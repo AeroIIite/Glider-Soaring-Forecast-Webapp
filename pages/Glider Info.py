@@ -32,6 +32,25 @@ def compare_with_forecast():
 
     # Input for Glider Type
     glider_name = st.text_input("Enter Your Glider's Name/Model:")
+    with st.expander("ℹ️ What Do 'Minimum' and 'Maximum Optimal Wind Speed' Mean?"):
+        st.markdown("""
+        ### 💨 Wind Speed Range for Soaring Performance
+
+        Your glider performs best within a certain **range of wind speeds**. Here's what each input means:
+
+        - **Minimum Optimal Wind Speed (m/s):**
+          The lowest wind speed at which your glider starts performing well. Below this, there may not be enough lift, especially from thermals or ridge lift.
+
+        - **Maximum Optimal Wind Speed (m/s):**
+          The highest wind speed where your glider still performs well. Above this, conditions might become turbulent or thermals may be disrupted.
+
+        ### ✈️ Example
+        For a glider like the *Discus-2*, a good range might be:
+        - **Min:** `2 m/s` (Thermals become usable)
+        - **Max:** `6 m/s` (Smooth soaring without too much turbulence)
+
+        This range helps us compare your glider with the forecast and tell you how well it might perform in upcoming weather conditions.
+        """)
 
     # Input for Glider Specifications
     optimal_wind_min = st.number_input("Enter Minimum Optimal Wind Speed (m/s):", min_value=0, step=1)
@@ -40,7 +59,7 @@ def compare_with_forecast():
 
     # Input for Weather City and API Key
     location = st.text_input("Enter the City for Weather Forecast:")
-    api_key = st.secrets["weather_api_key"]
+    api_key = st.text_input("Enter Your OpenWeatherMap API Key:")
 
     # When all inputs are provided
     if glider_name and location and api_key:
@@ -170,4 +189,3 @@ with st.expander("Submit your Glider info"):
 
     if st.button("Submit"):
         st.success("Thanks! We'll review and add your glider soon.")
-
