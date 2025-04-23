@@ -38,7 +38,7 @@ def get_coordinates(city_name):
 
 def get_forecast(lat, lon):
     api_key = st.secrets["weather_api_key"]
-    url = f"https://api.openweathermap.org/data/2.5/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,alerts&units=imperial&appid={api_key}"
+    url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,alerts&units=imperial&appid={api_key}"
     response = requests.get(url)
 
     if response.status_code == 200:
