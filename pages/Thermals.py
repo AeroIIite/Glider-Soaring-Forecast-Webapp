@@ -27,7 +27,7 @@ def display_thermal_map(lat, lon, forecast_data):
     m = folium.Map(location=[lat, lon], zoom_start=10)
     locations = [(lat + 0.01, lon + 0.01), (lat + 0.02, lon + 0.02)]  # Nearby points for simplicity
     thermal_intensity_scores = []
-    
+
     # Calculate thermal intensity for each location
     for loc in locations:
         lat, lon = loc
@@ -35,7 +35,7 @@ def display_thermal_map(lat, lon, forecast_data):
         wind_speed = forecast_data["daily"][0]["wind_speed"]
         cloud_cover = forecast_data["daily"][0]["clouds"]
         thermal_intensity_scores.append(calculate_thermal_intensity(temp, wind_speed, cloud_cover))
-    
+
     # Add markers to the map based on thermal intensity
     for i, loc in enumerate(locations):
         folium.CircleMarker(
@@ -77,7 +77,7 @@ def thermals_page():
                     if "hourly" in forecast_data:
                         best_hours = best_thermal_hours(forecast_data["hourly"])
                         best_hours_str = [datetime.datetime.utcfromtimestamp(hour).strftime('%H:%M') for hour in best_hours]
-                        
+
                         st.subheader("Best Thermal Hours")
                         if best_hours_str:
                             st.write("The best hours for thermal gliding are:")
@@ -86,7 +86,7 @@ def thermals_page():
                             st.write("No optimal thermal hours found for today.")
                     else:
                         st.write("Hourly forecast data is not available.")
-                    
+
                     # Additional weather details and scores
                     st.subheader(f"Weather Forecast for {location}")
 
@@ -115,7 +115,7 @@ def thermals_page():
 
     st.text("""
     How thermals are predicted:
-    
+
     - **Temperature**: A temperature above 75°F increases the chance of thermals.
     - **Wind Speed**: Winds below 5 m/s are favorable for thermals because stronger winds may disrupt thermal formation.
     - **Cloud Coverage**: Partial cloud cover (20-50%) often indicates that thermals are forming, especially with cumulus clouds.
