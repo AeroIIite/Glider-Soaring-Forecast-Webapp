@@ -1,77 +1,68 @@
-import datetime
 import streamlit as st
-from weather_api import get_weather_data
-from soaring_logic import calculate_soaring_score, calculate_thermal_prediction
 
-def format_weather_data(data):
-    location = data.get("name", "Unknown Location")
-    temperature = data["main"].get("temp", "N/A")
-    feels_like = data["main"].get("feels_like", "N/A")
-    temp_min = data["main"].get("temp_min", "N/A")
-    temp_max = data["main"].get("temp_max", "N/A")
-    humidity = data["main"].get("humidity", "N/A")
-    weather_desc = data["weather"][0].get("description", "N/A").capitalize()
-    wind_speed = data["wind"].get("speed", "N/A")
-    wind_deg = data["wind"].get("deg", "N/A")
-    clouds = data["clouds"].get("all", "N/A")
-    sunrise = data["sys"].get("sunrise", None)
-    sunset = data["sys"].get("sunset", None)
+st.set_page_config(page_title="GlideWX", page_icon="🛩️", layout="centered")
 
-    # Convert timestamps to readable time (local or UTC)
-    sunrise_time = datetime.datetime.utcfromtimestamp(sunrise).strftime('%I:%M %p UTC') if sunrise else "N/A"
-    sunset_time = datetime.datetime.utcfromtimestamp(sunset).strftime('%I:%M %p UTC') if sunset else "N/A"
+# Header
+st.title("🛩️ GlideWX")
+st.subheader("Your Soaring Companion for Thermal Forecasting")
 
-    # Scoring
-    soaring_score = calculate_soaring_score(data)
-    thermal_score = calculate_thermal_prediction(data)
-
-    report = f"""
-### Weather Report for **{location}**
-
-**Conditions:**
-- {weather_desc}
-- Temperature: {temperature}°F (Feels like: {feels_like}°F)
-- Low: {temp_min}°F, High: {temp_max}°F
-- Humidity: {humidity}%
-- Wind: {wind_speed} m/s at {wind_deg}°
-- Cloud Coverage: {clouds}%
-
-**Sunrise & Sunset:**
-- 🌅 Sunrise: {sunrise_time}
-- 🌇 Sunset: {sunset_time}
-
-**Soaring Predictions:**
-- 🪂 Gliding Score: **{soaring_score}/10**
-- 🔥 Thermal Prediction Score: **{thermal_score}/10**
-    """
-
-    return report
-
-# Streamlit app
-st.title("⛅ GlideWx: Current Conditions")
-
-location = st.text_input("Enter your glider location (e.g., Memphis):")
-
-if location:
-    data = get_weather_data(location)
-
-    if data:
-        st.markdown(format_weather_data(data))
-    else:
-        st.error("Unable to retrieve weather data. Please check the location or try again later.")
-
-# Educational section
 st.markdown("""
+Welcome to **GlideWX**, your intelligent gliding weather assistant.
+
+Whether you're planning a local thermal flight or chasing conditions across multiple days, GlideWX uses real-time weather data to help you:
+- 📍 Forecast thermal soaring potential
+- 📊 Score days with gliding conditions
+- 🗺️ Visualize thermal intensity and cloud cover
+- ⏰ Find the best flying hours
+
 ---
 
-### 🌤️ How Thermals Are Predicted
+### 🧭 Explore the App
 
-Thermals are rising currents of warm air that gliders use to stay aloft. Here’s what we consider:
+Use the navigation sidebar to:
+- 🔍 View **Today's Weather**
+- 📆 Get a **7-Day Forecast**
+- 📈 See **Thermal Predictions**
+- 📚 Learn about **How Scoring Works**
 
-- **🌡️ Temperature:** Above 75°F increases thermal chances.
-- **💨 Wind Speed:** Below 5 m/s is best; strong wind disrupts thermals.
-- **☁️ Clouds:** 20–50% cloud cover often indicates active thermals.
-- **🔽 Pressure:** Lower pressure systems often enhance thermals.
+---
 
-Fly safe and catch those thermals! 🛩️
+### 🔧 Built with OpenWeather API + Soaring Science
+
+Enjoy the skies, and happy soaring!
+""")
+
+
+st.title("🧮 How the Soaring Scores Work")
+
+st.markdown("""
+This section explains how we calculate the **Soaring Score** and **Thermal Prediction Score** for glider pilots.
+
+---
+
+### 🪂 Soaring Score
+The **Soaring Score** is a rating from 1 to 10 based on the overall favorability of the current or forecasted weather conditions for gliding. We take into account:
+
+- **Wind Speed:** Moderate winds are best. Too high can be dangerous or reduce soaring potential.
+- **Cloud Coverage:** Partial clouds (20–50%) suggest thermal activity.
+- **Temperature:** Warmer temperatures promote thermals.
+- **Precipitation Chance:** Lower is better for flying conditions.
+
+The score is designed to give a quick snapshot of how good the conditions are for a fun and safe glide.
+
+---
+
+### 🌡️ Thermal Prediction Score
+The **Thermal Prediction Score** measures the likelihood and strength of thermals, which are crucial for unpowered flight:
+
+- **🌡️ Temperature:** Above 75°F is better for thermal generation.
+- **💨 Wind Speed:** Below 5 m/s is ideal — higher wind can break up thermals.
+- **☁️ Clouds:** 20–50% cloud cover (especially cumulus) signals active thermals.
+- **🔽 Pressure:** Lower pressure systems enhance lift.
+
+---
+
+These scores are based on simplified algorithms designed for recreational glider pilots. Always check local weather conditions and use personal judgment before flying.
+
+Fly smart and stay safe! 🛩️
 """)
