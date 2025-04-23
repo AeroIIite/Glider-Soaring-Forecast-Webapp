@@ -40,7 +40,7 @@ def compare_with_forecast():
 
     # Input for Weather City and API Key
     location = st.text_input("Enter the City for Weather Forecast:")
-    api_key = st.text_input("Enter Your OpenWeatherMap API Key:")
+    api_key = st.secrets["weather_api_key"]
 
     # When all inputs are provided
     if glider_name and location and api_key:
