@@ -54,7 +54,7 @@ if data:
     formatted_weather = format_weather_data(data)
     st.text(formatted_weather)  # Use `st.text()` to ensure proper line breaks
 else:
-    return
+    st.write("Unable to retrieve weather data. Please try again.")
 
 st.text("""
 How these thermals are predicted:
