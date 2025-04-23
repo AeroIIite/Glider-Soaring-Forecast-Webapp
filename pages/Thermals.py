@@ -2,7 +2,7 @@ import datetime
 import streamlit as st
 import folium
 from weather_api import get_coordinates, get_forecast
-from soaring_logic import calculate_thermal_intensity, calculate_soaring_score_forecast, calculate_thermal_prediction_forecast
+from soaring_logic import calculate_thermal_prediction, calculate_soaring_score_forecast, calculate_thermal_prediction_forecast
 
 def calculate_thermal_intensity(temp, wind_speed, cloud_cover):
     """Calculate thermal intensity based on temperature, wind speed, and cloud cover."""
