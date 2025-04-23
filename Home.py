@@ -48,8 +48,8 @@ def format_weather_data(data):
     return report
 
 # Streamlit app
-st.title("⛅ Soaring Forecast Pro")
-st.subtitle("Current date and time")
+st.title("⛅ GlideWx: Current Conditions")
+
 location = st.text_input("Enter your glider location (e.g., Memphis):")
 
 if location:
