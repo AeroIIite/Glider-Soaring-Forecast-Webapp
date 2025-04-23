@@ -5,7 +5,6 @@ api_key = st.secrets["weather_api_key"]
 
 
 def get_weather_data(city_name):
-    api_key = "KEY"  # Replace with your actual API key
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=imperial"
     response = requests.get(url)
 
@@ -18,7 +17,6 @@ def get_weather_data(city_name):
 
 
 def get_coordinates(city_name):
-    api_key = "KEY"  # Replace with your actual API key
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric"
 
     response = requests.get(url)
