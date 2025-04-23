@@ -2,3 +2,5 @@ streamlit
 requests
 python-dotenv
 folium
+pytz
+timezonefinder
