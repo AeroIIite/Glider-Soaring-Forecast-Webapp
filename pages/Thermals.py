@@ -2,7 +2,7 @@ import datetime
 import streamlit as st
 import folium
 from weather_api import get_coordinates, get_forecast
-from soaring_logic import calculate_thermal_prediction, calculate_soaring_score_forecast, calculate_thermal_prediction_forecast
+from soaring_logic import calculate_thermal_intensity, calculate_soaring_score_forecast, calculate_thermal_prediction_forecast
 
 def calculate_thermal_intensity(temp, wind_speed, cloud_cover):
     """Calculate thermal intensity based on temperature, wind speed, and cloud cover."""
@@ -67,45 +67,52 @@ def thermals_page():
             # Get forecast data for the location
             forecast_data = get_forecast(lat, lon)
 
-            if forecast_data and "daily" in forecast_data:
-                # Thermal Intensity Map
-                st.subheader(f"Thermal Intensity Map for {location}")
-                display_thermal_map(lat, lon, forecast_data)
+            if forecast_data:
+                if "daily" in forecast_data:
+                    # Thermal Intensity Map
+                    st.subheader(f"Thermal Intensity Map for {location}")
+                    display_thermal_map(lat, lon, forecast_data)
 
-                # Best Thermal Hours
-                best_hours = best_thermal_hours(forecast_data["hourly"])
-                best_hours_str = [datetime.datetime.utcfromtimestamp(hour).strftime('%H:%M') for hour in best_hours]
-                
-                st.subheader("Best Thermal Hours")
-                if best_hours_str:
-                    st.write("The best hours for thermal gliding are:")
-                    st.write(", ".join(best_hours_str))
+                    # Best Thermal Hours - Error handling for missing 'hourly' key
+                    if "hourly" in forecast_data:
+                        best_hours = best_thermal_hours(forecast_data["hourly"])
+                        best_hours_str = [datetime.datetime.utcfromtimestamp(hour).strftime('%H:%M') for hour in best_hours]
+                        
+                        st.subheader("Best Thermal Hours")
+                        if best_hours_str:
+                            st.write("The best hours for thermal gliding are:")
+                            st.write(", ".join(best_hours_str))
+                        else:
+                            st.write("No optimal thermal hours found for today.")
+                    else:
+                        st.write("Hourly forecast data is not available.")
+                    
+                    # Additional weather details and scores
+                    st.subheader(f"Weather Forecast for {location}")
+
+                    for day in forecast_data["daily"]:
+                        date = datetime.datetime.utcfromtimestamp(day["dt"]).strftime('%A, %B %d, %Y')
+                        temp = day["temp"]["day"]
+                        wind = day["wind_speed"]
+                        rain = day.get("pop", 0) * 100  # Probability of precipitation
+                        clouds = day["clouds"]
+                        desc = day["weather"][0]["description"]
+
+                        st.markdown(f"---\n**Date**: {date}")
+                        st.text(f"Description: {desc.capitalize()}")
+                        st.text(f"Temperature: {temp}°F")
+                        st.text(f"Wind Speed: {wind} m/s")
+                        st.text(f"Rain Chance: {rain:.0f}%")
+                        st.text(f"Cloud Coverage: {clouds}%")
+                        st.text(f"Soaring Score: {calculate_soaring_score_forecast(day)}/10")
+                        st.text(f"Thermal Prediction Score: {calculate_thermal_prediction_forecast(day)}/10")
+
                 else:
-                    st.write("No optimal thermal hours found for today.")
-                
-                # Additional weather details and scores
-                st.subheader(f"Weather Forecast for {location}")
-
-                for day in forecast_data["daily"]:
-                    date = datetime.datetime.utcfromtimestamp(day["dt"]).strftime('%A, %B %d, %Y')
-                    temp = day["temp"]["day"]
-                    wind = day["wind_speed"]
-                    rain = day.get("pop", 0) * 100  # Probability of precipitation
-                    clouds = day["clouds"]
-                    desc = day["weather"][0]["description"]
-
-                    st.markdown(f"---\n**Date**: {date}")
-                    st.text(f"Description: {desc.capitalize()}")
-                    st.text(f"Temperature: {temp}°F")
-                    st.text(f"Wind Speed: {wind} m/s")
-                    st.text(f"Rain Chance: {rain:.0f}%")
-                    st.text(f"Cloud Coverage: {clouds}%")
-                    st.text(f"Soaring Score: {calculate_soaring_score_forecast(day)}/10")
-                    st.text(f"Thermal Prediction Score: {calculate_thermal_prediction_forecast(day)}/10")
+                    st.write("Could not retrieve daily forecast data.")
 
             else:
                 st.write("Could not retrieve forecast data.")
-    
+
     st.text("""
     How thermals are predicted:
     
