@@ -113,7 +113,7 @@ def thermals_page():
             else:
                 st.write("Could not retrieve forecast data.")
 
-    st.text("""
+    st.markdown("""
     How thermals are predicted:
 
     - **Temperature**: A temperature above 75°F increases the chance of thermals.
