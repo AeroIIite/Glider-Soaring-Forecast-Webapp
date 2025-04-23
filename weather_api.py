@@ -2,7 +2,7 @@ import requests
 
 
 def get_weather_data(city_name):
-    api_key = "117592278e2f56a31b2d3c65659e57c0"  # Replace with your actual API key
+    api_key = "KEY"  # Replace with your actual API key
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=imperial"
     response = requests.get(url)
 
@@ -15,7 +15,7 @@ def get_weather_data(city_name):
 
 
 def get_coordinates(city_name):
-    api_key = "117592278e2f56a31b2d3c65659e57c0"  # Replace with your actual API key
+    api_key = "KEY"  # Replace with your actual API key
     url = f"https://api.openweathermap.org/data/2.5/weather?q={city_name}&appid={api_key}&units=metric"
 
     response = requests.get(url)
@@ -32,6 +32,6 @@ def get_coordinates(city_name):
 
 
 def get_forecast(lat, lon):
-    url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,alerts&units=imperial&appid=117592278e2f56a31b2d3c65659e57c0"
+    url = f"https://api.openweathermap.org/data/3.0/onecall?lat={lat}&lon={lon}&exclude=minutely,hourly,alerts&units=imperial&appid={api_key}"
     response = requests.get(url)
     return response.json()
