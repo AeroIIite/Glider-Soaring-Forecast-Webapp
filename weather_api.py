@@ -1,6 +1,11 @@
 import requests
 import streamlit as st
 
+if "weather_api_key" not in st.secrets:
+    st.error("API key not found! Did you set it in Streamlit Cloud > Edit secrets?")
+else:
+    st.success("API key found. Proceeding with request...")
+
 
 def get_weather_data(city_name):
     api_key = st.secrets["weather_api_key"]
