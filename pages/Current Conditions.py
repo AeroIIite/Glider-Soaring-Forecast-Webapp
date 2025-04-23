@@ -14,7 +14,7 @@ def convert_to_local_time(timestamp, lat, lon):
     local_time = datetime.datetime.fromtimestamp(timestamp, local_tz)
     return local_time.strftime('%I:%M %p %Z')  # Example: 07:25 AM CDT
 
-def format_weather_data(data):
+def format_weather_data(data, lat, lon):
     location = data.get("name", "Unknown Location")
     temperature = data["main"].get("temp", "N/A")
     feels_like = data["main"].get("feels_like", "N/A")
@@ -62,11 +62,12 @@ def format_weather_data(data):
 st.title("⛅ GlideWx: Current Conditions")
 
 location = st.text_input("Enter your glider location (e.g., Memphis):")
-lat,lon = get_coordinates(location)
+
 if location:
+    lat, lon = get_coordinates(location)
     data = get_weather_data(location)
 
-    if data:
-        st.markdown(format_weather_data(data))
+    if data and lat is not None and lon is not None:
+        st.markdown(format_weather_data(data, lat, lon))
     else:
         st.error("Unable to retrieve weather data. Please check the location or try again later.")
