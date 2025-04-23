@@ -2,126 +2,96 @@ import datetime
 import streamlit as st
 import folium
 from weather_api import get_coordinates, get_forecast
-from soaring_logic import calculate_thermal_prediction, calculate_soaring_score_forecast, calculate_thermal_prediction_forecast
+from soaring_logic import calculate_thermal_prediction_forecast, calculate_soaring_score_forecast
+from streamlit.components.v1 import html
 
 def calculate_thermal_intensity(temp, wind_speed, cloud_cover):
-    """Calculate thermal intensity based on temperature, wind speed, and cloud cover."""
-    temp_score = temp > 75  # Only temperatures above 75°F are considered for thermals
-    wind_score = wind_speed < 5  # Light winds are better for thermals
-    cloud_score = 20 <= cloud_cover <= 50  # Partial clouds are favorable for thermals
-    return temp_score + wind_score + cloud_score
+    return (temp > 75) + (wind_speed < 5) + (20 <= cloud_cover <= 50)
 
 def best_thermal_hours(hourly_data):
-    """Identify the best thermal hours based on forecast conditions."""
     best_hours = []
     for hour in hourly_data:
-        temp = hour["temp"]
-        wind_speed = hour["wind_speed"]
-        cloud_cover = hour["clouds"]
-        if temp > 75 and wind_speed < 5 and 20 <= cloud_cover <= 50:
-            best_hours.append(hour["dt"])  # Add the timestamp of the best hours
+        if hour["temp"] > 75 and hour["wind_speed"] < 5 and 20 <= hour["clouds"] <= 50:
+            best_hours.append(hour["dt"])
     return best_hours
 
 def display_thermal_map(lat, lon, forecast_data):
-    """Display thermal intensity on a map using Folium."""
     m = folium.Map(location=[lat, lon], zoom_start=10)
-    locations = [(lat + 0.01, lon + 0.01), (lat + 0.02, lon + 0.02)]  # Nearby points for simplicity
-    thermal_intensity_scores = []
+    nearby_locs = [(lat + 0.01, lon + 0.01), (lat + 0.02, lon + 0.02)]
 
-    # Calculate thermal intensity for each location
-    for loc in locations:
-        lat, lon = loc
-        temp = forecast_data["daily"][0]["temp"]["day"]  # Day temperature
-        wind_speed = forecast_data["daily"][0]["wind_speed"]
-        cloud_cover = forecast_data["daily"][0]["clouds"]
-        thermal_intensity_scores.append(calculate_thermal_intensity(temp, wind_speed, cloud_cover))
-
-    # Add markers to the map based on thermal intensity
-    for i, loc in enumerate(locations):
+    for loc in nearby_locs:
+        t_intensity = calculate_thermal_intensity(
+            forecast_data["daily"][0]["temp"]["day"],
+            forecast_data["daily"][0]["wind_speed"],
+            forecast_data["daily"][0]["clouds"]
+        )
         folium.CircleMarker(
             location=loc,
             radius=10,
-            color='green' if thermal_intensity_scores[i] > 1 else 'red',
+            color='green' if t_intensity > 1 else 'red',
             fill=True,
-            fill_color='green' if thermal_intensity_scores[i] > 1 else 'red',
+            fill_color='green' if t_intensity > 1 else 'red',
             fill_opacity=0.6,
-            popup=f"Thermal Intensity: {thermal_intensity_scores[i]}"
+            popup=f"Thermal Intensity: {t_intensity}/3"
         ).add_to(m)
 
-    # Render the map in Streamlit
-    st.components.v1.html(m._repr_html_(), width=700, height=500)
+    html(m._repr_html_(), height=500)
 
 def thermals_page():
-    st.title("Thermal Glider Forecast - Thermals")
+    st.title("🔥 GlideWX: Thermal Glider Forecast")
 
-    # Get location input
+    st.markdown("### 📍 Enter a Location to Begin")
     location = st.text_input("Enter your location (e.g., Memphis):")
 
     if location:
-        # Get coordinates for the location
         lat, lon = get_coordinates(location)
 
         if lat is None or lon is None:
-            st.write("Could not find coordinates for that location.")
-        else:
-            # Get forecast data for the location
-            forecast_data = get_forecast(lat, lon)
+            st.error("❌ Could not find coordinates for that location.")
+            return
 
-            if forecast_data:
-                if "daily" in forecast_data:
-                    # Thermal Intensity Map
-                    st.subheader(f"Thermal Intensity Map for {location}")
-                    display_thermal_map(lat, lon, forecast_data)
+        forecast_data = get_forecast(lat, lon)
+        if not forecast_data:
+            st.error("⚠️ Could not retrieve forecast data.")
+            return
 
-                    # Best Thermal Hours - Error handling for missing 'hourly' key
-                    if "hourly" in forecast_data:
-                        best_hours = best_thermal_hours(forecast_data["hourly"])
-                        best_hours_str = [datetime.datetime.utcfromtimestamp(hour).strftime('%H:%M') for hour in best_hours]
+        st.markdown("---")
+        st.subheader(f"🗺️ Thermal Intensity Map for **{location}**")
+        display_thermal_map(lat, lon, forecast_data)
 
-                        st.subheader("Best Thermal Hours")
-                        if best_hours_str:
-                            st.write("The best hours for thermal gliding are:")
-                            st.write(", ".join(best_hours_str))
-                        else:
-                            st.write("No optimal thermal hours found for today.")
-                    else:
-                        st.write("Hourly forecast data is not available.")
-
-                    # Additional weather details and scores
-                    st.subheader(f"Weather Forecast for {location}")
-
-                    for day in forecast_data["daily"]:
-                        date = datetime.datetime.utcfromtimestamp(day["dt"]).strftime('%A, %B %d, %Y')
-                        temp = day["temp"]["day"]
-                        wind = day["wind_speed"]
-                        rain = day.get("pop", 0) * 100  # Probability of precipitation
-                        clouds = day["clouds"]
-                        desc = day["weather"][0]["description"]
-
-                        st.markdown(f"---\n**Date**: {date}")
-                        st.text(f"Description: {desc.capitalize()}")
-                        st.text(f"Temperature: {temp}°F")
-                        st.text(f"Wind Speed: {wind} m/s")
-                        st.text(f"Rain Chance: {rain:.0f}%")
-                        st.text(f"Cloud Coverage: {clouds}%")
-                        st.text(f"Soaring Score: {calculate_soaring_score_forecast(day)}/10")
-                        st.text(f"Thermal Prediction Score: {calculate_thermal_prediction_forecast(day)}/10")
-
-                else:
-                    st.write("Could not retrieve daily forecast data.")
-
+        st.markdown("---")
+        if "hourly" in forecast_data:
+            best_hours = best_thermal_hours(forecast_data["hourly"])
+            if best_hours:
+                best_hours_str = [datetime.datetime.utcfromtimestamp(h).strftime('%I:%M %p') for h in best_hours]
+                st.success("🌤️ Best hours for thermaling today:")
+                st.write(", ".join(best_hours_str))
             else:
-                st.write("Could not retrieve forecast data.")
+                st.warning("No optimal thermal hours found for today.")
+        else:
+            st.warning("Hourly forecast data not available.")
 
-    st.markdown("""
-    How thermals are predicted:
+        st.markdown("---")
+        st.subheader(f"📅 Detailed 7-Day Forecast for {location}")
+        for day in forecast_data.get("daily", []):
+            with st.expander(datetime.datetime.utcfromtimestamp(day["dt"]).strftime('%A, %B %d, %Y')):
+                st.markdown(f"**Weather**: {day['weather'][0]['description'].capitalize()}")
+                st.markdown(f"- 🌡️ Temp: {day['temp']['day']}°F")
+                st.markdown(f"- 💨 Wind: {day['wind_speed']} m/s")
+                st.markdown(f"- 🌧️ Rain Chance: {day.get('pop', 0) * 100:.0f}%")
+                st.markdown(f"- ☁️ Cloud Cover: {day['clouds']}%")
+                st.markdown(f"- 🪂 Soaring Score: **{calculate_soaring_score_forecast(day)}/10**")
+                st.markdown(f"- 🔥 Thermal Prediction: **{calculate_thermal_prediction_forecast(day)}/10**")
 
-    - **Temperature**: A temperature above 75°F increases the chance of thermals.
-    - **Wind Speed**: Winds below 5 m/s are favorable for thermals because stronger winds may disrupt thermal formation.
-    - **Cloud Coverage**: Partial cloud cover (20-50%) often indicates that thermals are forming, especially with cumulus clouds.
-    - **Pressure**: Lower pressure systems often enhance thermal formation.
-    """)
+        st.markdown("---")
+        with st.expander("ℹ️ How are thermals predicted?"):
+            st.markdown("""
+            - **Temperature**: Above 75°F improves thermal chances.
+            - **Wind Speed**: Below 5 m/s is ideal.
+            - **Clouds**: Partial clouds (20–50%) are favorable.
+            - **Pressure**: Lower pressure helps form thermals.
+            """)
 
-# Running the page
+# Run page
 if __name__ == "__main__":
     thermals_page()
