@@ -179,13 +179,4 @@ if selected_glider:
 # Optional: Custom glider entry
 st.markdown("---")
 st.subheader("Can't find your Glider?")
-with st.expander("Submit your Glider info"):
-    name = st.text_input("Glider Name")
-    glide_ratio = st.text_input("Glide Ratio")
-    stall_speed = st.text_input("Stall Speed")
-    max_ld_speed = st.text_input("Max L/D Speed")
-    min_sink = st.text_input("Min Sink Rate")
-    image_url = st.text_input("Image URL (optional)")
-
-    if st.button("Submit"):
-        st.success("Thanks! We'll review and add your glider soon.")
+st.markdown("👉 [Submit Your Glider Info](https://docs.google.com/forms/d/e/1FAIpQLScSY6Ww668qT2z5tEtjVoQD9ItB4lIrRF-gMmybOVRG6qO4MQ/viewform?usp=dialog)")
