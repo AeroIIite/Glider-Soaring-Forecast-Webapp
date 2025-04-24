@@ -162,6 +162,13 @@ glider_data = {
         "Min Sink Rate": "2.6 ft/s",
         "Image URL": "https://live.staticflickr.com/65535/53468330865_8f2d8dfac7_o.jpg"
     }
+    "SAZ-55-1": {
+        "Glide Ratio": "43:1",
+        "Stall Speed": "34 knots",
+        "Max L/D Speed": "50 knots",
+        "Min Sink Rate": "2.5 ft/s",
+        "Image URL": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Glider_SZD-55-1.jpg/1200px-Glider_SZD-55-1.jpg"
+    }
 }
 
 st.title("🛩️ Glider Specifications")
