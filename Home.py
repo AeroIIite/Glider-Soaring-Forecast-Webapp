@@ -2,67 +2,50 @@ import streamlit as st
 
 st.set_page_config(page_title="GlideWX", page_icon="🛩️", layout="centered")
 
-# Header
+# ─────────────────────────────────────────────────────
+# HEADER
 st.title("🛩️ GlideWX")
-st.subheader("Your Soaring Companion for Thermal Forecasting")
+st.subheader("Smart Thermal Forecasting for Glider Pilots")
 
+st.markdown("---")
+
+# ─────────────────────────────────────────────────────
+# APP INTRO
 st.markdown("""
-Welcome to **GlideWX**, your intelligent gliding weather assistant.
+GlideWX is your **real-time soaring companion** designed for recreational glider pilots.
 
-Whether you're planning a local thermal flight or chasing conditions across multiple days, GlideWX uses real-time weather data to help you:
-- 📍 Forecast thermal soaring potential
-- 📊 Score days with gliding conditions
-- 🗺️ Visualize thermal intensity and cloud cover
-- ⏰ Find the best flying hours
+It combines live weather data with soaring science to help you make better flying decisions, faster.
 
----
-
-### 🧭 Explore the App
-
-Use the navigation sidebar to:
-- 🔍 View **Today's Weather**
-- 📆 Get a **7-Day Forecast**
-- 📈 See **Thermal Predictions**
-- 📚 Learn about **How Scoring Works**
-
----
-
-### 🔧 Built with OpenWeather API + Soaring Science
-
-Enjoy the skies, and happy soaring!
+### Why Pilots Love GlideWX:
+- 📍 **Pinpoint Thermals** – Find areas with strong thermal activity
+- 📊 **Daily Soaring Scores** – Get quick-read ratings from 1–10
+- ⏰ **Optimal Flight Windows** – Identify the best times to fly
+- 🧠 **Simple, Science-Backed Tools** – Built with real soaring logic
 """)
 
+st.markdown("---")
 
-st.title("🧮 How the Soaring Scores Work")
-
+# ─────────────────────────────────────────────────────
+# FEATURES NAV
+st.markdown("### 🚀 Explore the Features")
 st.markdown("""
-This section explains how we calculate the **Soaring Score** and **Thermal Prediction Score** for glider pilots.
-
----
-
-### 🪂 Soaring Score
-The **Soaring Score** is a rating from 1 to 10 based on the overall favorability of the current or forecasted weather conditions for gliding. We take into account:
-
-- **Wind Speed:** Moderate winds are best. Too high can be dangerous or reduce soaring potential.
-- **Cloud Coverage:** Partial clouds (20–50%) suggest thermal activity.
-- **Temperature:** Warmer temperatures promote thermals.
-- **Precipitation Chance:** Lower is better for flying conditions.
-
-The score is designed to give a quick snapshot of how good the conditions are for a fun and safe glide.
-
----
-
-### 🌡️ Thermal Prediction Score
-The **Thermal Prediction Score** measures the likelihood and strength of thermals, which are crucial for unpowered flight:
-
-- **🌡️ Temperature:** Above 75°F is better for thermal generation.
-- **💨 Wind Speed:** Below 5 m/s is ideal — higher wind can break up thermals.
-- **☁️ Clouds:** 20–50% cloud cover (especially cumulus) signals active thermals.
-- **🔽 Pressure:** Lower pressure systems enhance lift.
-
----
-
-These scores are based on simplified algorithms designed for recreational glider pilots. Always check local weather conditions and use personal judgment before flying.
-
-Fly smart and stay safe! 🛩️
+Use the sidebar to access:
+- 🔍 **Today’s Weather** — Current soaring forecast
+- 📆 **7-Day Outlook** — Multi-day planning for cross-country
+- 📈 **Thermal Predictions** — Understand where and when lift forms
+- 🧮 **Soaring Score Logic** — Learn how scores are calculated
 """)
+
+st.markdown("---")
+
+# ─────────────────────────────────────────────────────
+# FEEDBACK SECTION
+st.markdown("### 💬 Got Feedback or Suggestions?")
+st.markdown("""
+We’d love your input to make GlideWX even better.
+
+👉 [Submit Feedback](https://docs.google.com/forms/d/e/1FAIpQLScmohT-qBuh_UPpYZobYElCFVI2XHYYuLTxxBsDhf3VkQvq_A/viewform?usp=dialog)
+""")
+
+# Optional touch
+st.caption("Built for glider pilots. Powered by OpenWeather + passion for flight.")
